@@ -1,5 +1,5 @@
 // Project: @enocean-core/eep-d2-05-00
-// File: EEP_D2_05_00_Message.ts
+// File: Message.ts
 //
 // Copyright 2020 Henning Kerstan
 //
@@ -18,20 +18,20 @@
 import * as EnOcean from 'enocean-core'
 import { Byte } from '@henningkerstan/byte'
 
-import { EEP_D2_05_00_Commands } from './EEP_D2_05_00_Commands'
-import { EEP_D2_05_00_RepositioningMode } from './EEP_D2_05_00_RepositioningMode'
-import { EEP_D2_05_00_SetLockingMode } from './EEP_D2_00_SetLockingMode'
-import { EEP_D2_05_00_LockingMode } from './EEP_D2_05_00_LockingMode'
+import { Commands } from './Commands'
+import { RepositioningMode } from './RepositioningMode'
+import { SetLockingMode } from './SetLockingMode'
+import { LockingMode } from './LockingMode'
 
 /**
  * EEP D2-05-00: Blinds Control for Position and Angle - Type 0x00
  */
-export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
-  command: EEP_D2_05_00_Commands
+export class Message implements EnOcean.EEPMessage {
+  command: Commands
   position = 127
   angle = 127
   lockingMode = 0
-  repositioningMode: number = EEP_D2_05_00_RepositioningMode.Direct
+  repositioningMode: number = RepositioningMode.Direct
 
   toERP1Telegram(sender: EnOcean.DeviceId, destination: EnOcean.DeviceId): EnOcean.ERP1Telegram {
     // set up VLD telegram
@@ -48,8 +48,8 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
 
     // for query and stop command, only DB0 is required
     if (
-      this.command === EEP_D2_05_00_Commands.QueryPositionAndAngle ||
-      this.command === EEP_D2_05_00_Commands.Stop
+      this.command === Commands.QueryPositionAndAngle ||
+      this.command === Commands.Stop
     ) {
       erp.userData = Buffer.alloc(1)
       erp.setDB(0, db0.readUIntLSB())
@@ -58,8 +58,8 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
 
     // for goto/reply position/angle we need 4 bytes
     if (
-      this.command === EEP_D2_05_00_Commands.GoToPositionAndAngle ||
-      this.command === EEP_D2_05_00_Commands.ReplyPositionAndAngle
+      this.command === Commands.GoToPositionAndAngle ||
+      this.command === Commands.ReplyPositionAndAngle
     ) {
       erp.userData = Buffer.alloc(4)
       erp.setDB(3, this.position)
@@ -68,7 +68,7 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
       const db1 = Byte.allZero()
       db1.writeUIntLSB(this.lockingMode, 0, 3)
 
-      if (this.command === EEP_D2_05_00_Commands.GoToPositionAndAngle) {
+      if (this.command === Commands.GoToPositionAndAngle) {
         db1.writeUIntLSB(this.repositioningMode, 4, 3)
       }
 
@@ -78,7 +78,7 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
       return erp
     }
 
-    if (this.command !== EEP_D2_05_00_Commands.SetParameters) {
+    if (this.command !== Commands.SetParameters) {
       throw new Error('Unknown command')
     }
 
@@ -116,16 +116,16 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
 
     // processing is complete for commands "stop" and "query position and angle"
     if (
-      cmd === EEP_D2_05_00_Commands.Stop ||
-      cmd === EEP_D2_05_00_Commands.QueryPositionAndAngle
+      cmd === Commands.Stop ||
+      cmd === Commands.QueryPositionAndAngle
     ) {
       this.command = cmd
       return
     }
 
     if (
-      cmd === EEP_D2_05_00_Commands.GoToPositionAndAngle ||
-      cmd === EEP_D2_05_00_Commands.ReplyPositionAndAngle
+      cmd === Commands.GoToPositionAndAngle ||
+      cmd === Commands.ReplyPositionAndAngle
     ) {
       if (telegram.userData.length !== 4) {
         throw new Error('User data size must be 4 for CMD 1/4')
@@ -141,7 +141,7 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
       const db1 = Byte.fromUInt8LSB(telegram.getDB(1))
       this.lockingMode = db1.readUIntLSB(0, 3)
 
-      if (cmd === EEP_D2_05_00_Commands.GoToPositionAndAngle) {
+      if (cmd === Commands.GoToPositionAndAngle) {
         this.repositioningMode = db1.readUIntLSB(4, 3)
       }
 
@@ -152,26 +152,26 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
     throw new Error('UNKNOWN CMD')
   }
 
-  static fromERP1Telegram(telegram: EnOcean.ERP1Telegram): EEP_D2_05_00_Message {
-    const eep = new EEP_D2_05_00_Message()
+  static fromERP1Telegram(telegram: EnOcean.ERP1Telegram): Message {
+    const eep = new Message()
     eep.fromERP1Telegram(telegram)
     return eep
   }
 
-  private cmdToString(cmd: EEP_D2_05_00_Commands) {
-    return EEP_D2_05_00_Commands[cmd] + ' (' + cmd + ')'
+  private cmdToString(cmd: Commands) {
+    return Commands[cmd] + ' (' + cmd + ')'
   }
 
-  private repositioningModeToString(mode: EEP_D2_05_00_RepositioningMode) {
-    return EEP_D2_05_00_RepositioningMode[mode] + ' (' + mode + ')'
+  private repositioningModeToString(mode: RepositioningMode) {
+    return RepositioningMode[mode] + ' (' + mode + ')'
   }
 
-  private setLockingModeToString(mode: EEP_D2_05_00_SetLockingMode) {
-    return EEP_D2_05_00_SetLockingMode[mode] + ' (' + mode + ')'
+  private setLockingModeToString(mode: SetLockingMode) {
+    return SetLockingMode[mode] + ' (' + mode + ')'
   }
 
-  private lockingModeToString(mode: EEP_D2_05_00_LockingMode) {
-    return EEP_D2_05_00_LockingMode[mode] + ' (' + mode + ')'
+  private lockingModeToString(mode: LockingMode) {
+    return LockingMode[mode] + ' (' + mode + ')'
   }
 
   private angleToString() {
@@ -195,14 +195,14 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
     s += '  Command:       ' + this.cmdToString(this.command) + '\n'
 
     if (
-      this.command === EEP_D2_05_00_Commands.Stop ||
-      this.command === EEP_D2_05_00_Commands.QueryPositionAndAngle
+      this.command === Commands.Stop ||
+      this.command === Commands.QueryPositionAndAngle
     ) {
       s += '}'
       return s
     }
 
-    if (this.command === EEP_D2_05_00_Commands.GoToPositionAndAngle) {
+    if (this.command === Commands.GoToPositionAndAngle) {
       s += '  Position:      ' + this.position + '% closed\n'
       s += '  Angle:         ' + this.angleToString() + '\n'
       s +=
@@ -211,7 +211,7 @@ export class EEP_D2_05_00_Message implements EnOcean.EEPMessage {
         '\n'
     }
 
-    if (this.command === EEP_D2_05_00_Commands.ReplyPositionAndAngle) {
+    if (this.command === Commands.ReplyPositionAndAngle) {
       s += '  Position:      ' + this.position + '% closed\n'
       s += '  Angle:         ' + this.angleToString() + '\n'
       s +=

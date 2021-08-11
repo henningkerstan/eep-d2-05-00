@@ -1,5 +1,5 @@
 // Project: @enocean-core/eep-d2-05-00
-// File: EEP_D2_00_SetLockingMode.ts
+// File: RepositioningMode.ts
 //
 // Copyright 2020 Henning Kerstan
 //
@@ -15,10 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export enum EEP_D2_05_00_SetLockingMode {
-  NoChange = 0,
-  SetBlockageMode = 1,
-  SetAlarmMode = 2,
-  // 3-6 reserved
-  Deblockage = 7,
+export enum RepositioningMode {
+  Direct = 0,
+  FirstUp = 1,
+  FirstDown = 2,
+  // 3-7 reserved
 }

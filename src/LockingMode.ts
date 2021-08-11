@@ -1,5 +1,5 @@
 // Project: @enocean-core/eep-d2-05-00
-// File: EEP_D2_05_00_Parser.ts
+// File: LockingMode.ts
 //
 // Copyright 2020 Henning Kerstan
 //
@@ -15,13 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as EnOcean from 'enocean-core'
-import { EEP_D2_05_00_Message } from './EEP_D2_05_00_Message'
-
-export const EEP_D2_05_00_Parser: EnOcean.EEPParser = function (
-  telegram: EnOcean.ERP1Telegram,
-): EEP_D2_05_00_Message {
-  const msg = new EEP_D2_05_00_Message()
-  msg.fromERP1Telegram(telegram)
-  return msg
+export enum LockingMode {
+  NoLock = 0,
+  Blockage = 1,
+  Alarm = 2,
+  // 3 - 7 reserved
 }

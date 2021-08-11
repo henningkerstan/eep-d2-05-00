@@ -1,5 +1,5 @@
 // Project: @enocean-core/eep-d2-05-00
-// File: EEP_D2_05_00_LockingMode.ts
+// File: Commands.ts
 //
 // Copyright 2020 Henning Kerstan
 //
@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export enum EEP_D2_05_00_LockingMode {
-  NoLock = 0,
-  Blockage = 1,
-  Alarm = 2,
-  // 3 - 7 reserved
+export enum Commands {
+  GoToPositionAndAngle = 1,
+  Stop = 2,
+  QueryPositionAndAngle = 3,
+  ReplyPositionAndAngle = 4,
+  SetParameters,
 }

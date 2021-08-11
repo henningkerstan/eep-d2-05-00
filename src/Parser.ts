@@ -1,5 +1,5 @@
 // Project: @enocean-core/eep-d2-05-00
-// File: EEP_D2_05_00_RepositioningMode.ts
+// File: Parser.ts
 //
 // Copyright 2020 Henning Kerstan
 //
@@ -15,9 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export enum EEP_D2_05_00_RepositioningMode {
-  Direct = 0,
-  FirstUp = 1,
-  FirstDown = 2,
-  // 3-7 reserved
+import * as EnOcean from 'enocean-core'
+import { Message } from './Message'
+
+export const Parser: EnOcean.EEPParser = function (
+  telegram: EnOcean.ERP1Telegram,
+): Message {
+  const msg = new Message()
+  msg.fromERP1Telegram(telegram)
+  return msg
 }

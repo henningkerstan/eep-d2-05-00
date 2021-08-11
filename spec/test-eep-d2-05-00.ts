@@ -21,7 +21,7 @@ import * as EEP_D2_05_00 from '../lib/eep/EEP_D2_05_00'
 
 
 let eep = new EEP_D2_05_00.default()
-eep.command = EEP_D2_05_00.EEP_D2_05_00_Commands.GoToPositionAndAngle
+eep.command = EEP_D2_05_00.Commands.GoToPositionAndAngle
 eep.position = 42
 eep.angle = 127
 
