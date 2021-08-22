@@ -17,7 +17,6 @@
 
 import * as EnOcean from 'enocean-core'
 import { Byte } from '@henningkerstan/byte'
-
 import { Commands } from './Commands'
 import { RepositioningMode } from './RepositioningMode'
 import { SetLockingMode } from './SetLockingMode'
